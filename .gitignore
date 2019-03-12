@@ -102,3 +102,8 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# others
+*.vim
+*.swp
+.DS_Store
