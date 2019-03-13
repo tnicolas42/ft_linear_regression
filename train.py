@@ -20,16 +20,19 @@ all_args = dict(
         value=None,
         type=[list],
         argnames=['--theta'],
+        info='use a custom theta (instead of import it from a file)',
     ),
     nb_iter=dict(
         value=const.NB_ITER,
         type=[int],
-        argnames=['--nb_iter'],
+        argnames=['--nb_iter', '--nb_iteration'],
+        info='number of iteration to fit'
     ),
     data_filename=dict(
         value=const.DATA_FILENAME,
         type=[str],
         argnames=['--data', '--data_filename'],
+        info='path of the dataset (csv)',
     ),
     data_km=dict(
         value=const.DATA_KM,
@@ -45,6 +48,7 @@ all_args = dict(
         value=const.THETA_FILENAME,
         type=[str],
         argnames=['--theta_filename'],
+        info='path of the theta file (json)'
     ),
 )
 

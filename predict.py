@@ -15,16 +15,19 @@ all_args = dict(
         value=None,
         type=[list],
         argnames=['--theta'],
+        info='use a custom theta (instead of import it from a file)',
     ),
     theta_filename=dict(
         value=const.THETA_FILENAME,
         type=[str],
         argnames=['--theta_filename'],
+        info='path of the theta file (json)'
     ),
     data_predict=dict(
         value=None,
         type=[int, list],
         argnames=['--car_km', '--data_predict'],
+        info='data to predict (in km) -> this is an int or a list',
     ),
 )
 

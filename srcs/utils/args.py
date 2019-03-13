@@ -13,11 +13,13 @@ you just have to create an arg dict:
 ...         value=<def_value>,
 ...         type=[<type1>, [type2], ...],
 ...         argnames=[<argname1>, [argname2, ...]],
+...         info=<info about this arg>,  # optional
 ...     ),
 ...     value=dict(
 ...         value=12,
 ...         type=[int, float],
 ...         argnames=['--value', '--val'],
+...         info="this is the value",
 ...     ),
 ...    ...
 ... )
@@ -41,7 +43,15 @@ def print_usage(all_args, filename):
     print('usage: python3 %s [arg1=value1, ...]' % (filename))
     print('args list:')
     for key, arg_dict in all_args.items():
-        print('\t%s=%s %s' % (arg_dict['argnames'][0], str(arg_dict['value']), str(arg_dict['type'])))
+        types = ''
+        for t in arg_dict['type']:
+            if types is not '':
+                types += ', '
+            types += str(t).split("'")[1]
+        info = ''
+        if 'info' in arg_dict:
+            info = ' ' + arg_dict['info']
+        print('\t%s=%s  # [%s]%s' % (arg_dict['argnames'][0], str(arg_dict['value']), types, info))
 
 
 def convert_from_str(data_str, types):
