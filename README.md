@@ -39,3 +39,23 @@ Example:
 ```
 python3 train.py --nb_iter=1500 '--theta=[12, 0.2]'
 ```
+
+### Predict
+```
+python3 predict.py
+```
+To get usage:
+```
+python3 predict.py --usage
+```
+Options:
+```
+--theta=None [<class 'list'>]  # use a custom theta instead of import it from a file
+--theta_filename=data/theta.json [<class 'str'>]  # set the filename to import/export theta
+--car_km=None [<class 'int'>, <class 'list'>]  # the number of km driven by a car (to predict)
+```
+Example:
+```
+python3 predict.py --car_km=130000
+python3 predict.py '--car_km=[130000, 350000]'
+```
