@@ -37,7 +37,11 @@ Options:
 ```
 Example:
 ```
-python3 train.py --nb_iter=1500 '--theta=[12, 0.2]'
+python3 train.py --nb_iter=1500 '--theta=[0, 0]'  # to train from empty theta
+```
+To reset theta:
+```
+python3 train.py --nb_iter=0 '--theta=[0, 0]'
 ```
 
 ### Predict
