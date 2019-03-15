@@ -21,7 +21,7 @@ def get_theta_in_args(all_args):
 
 def import_theta(filename):
     if not os.path.isfile(filename):
-        logerr('cannot import theta: %s doesn\'t exist' % (filename))
+        logerr('cannot import theta: %s is not a file' % (filename))
         return None
 
     with open(filename, 'r') as f:
@@ -49,7 +49,7 @@ def export_theta(filename, theta):
 def import_data(all_args):
     try:
         data = pd.read_csv(all_args['data_filename']['value'])
-    except pd.errors.ParserError:
+    except (pd.errors.ParserError, pd.errors.EmptyDataError):
         logerr('unable to read the csv:', all_args['data_filename']['value'])
         return None, None, None
     try:

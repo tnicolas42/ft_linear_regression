@@ -53,8 +53,8 @@ all_args = dict(
     auto_stop=dict(
         value=True,
         type=[bool],
-        argnames=['--theta_filename'],
-        info='path of the theta file (json)'
+        argnames=['--auto_stop'],
+        info='enable/disable the auto stop mode'
     ),
 )
 

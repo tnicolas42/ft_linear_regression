@@ -1,3 +1,4 @@
+import numpy as np
 import srcs.const as const
 from srcs.utils.log import logerr, loginfo
 """
@@ -5,11 +6,28 @@ this file contains utils fonctions
 """
 
 
-def predict(X, theta):
+def predict_float(X, theta):
+    """
+    predict and return a float (precise method)
+    """
+    return theta[0] + X * theta[1]
+
+
+def predict_int(X, theta):
+    """
+    predict and retrun an int (or a list of int)
+    this method is enouth for predict the price of a car
+    """
+    if type(X) is int:
+        return int(theta[0] + X * theta[1])
+    return np.array(theta[0] + X * theta[1], int)
+
+
+def predict(X, theta, predict_method=predict_float):
     """
     predict one or a list of data with given values of theta
     """
-    return theta[0] + X * theta[1]
+    return predict_method(X, theta)
 
 
 def normalize(X):
@@ -23,6 +41,9 @@ def normalize_theta(X, theta):
     """
     in input we have a theta for non-normalized values.
     we need to update the theta to fit with normalised values
+
+    theta0 + theta1 * x = theta0_norm + theta1_norm * x_norm
+    we resolve this equation with min(X) and x max(X)
     """
     xmin = min(X)  # min value in X
     xmax = max(X)  # max value in X
@@ -33,7 +54,7 @@ def normalize_theta(X, theta):
     res1 = theta[0] + theta[1] * x1
     res2 = theta[0] + theta[1] * x2
 
-    theta[1] = (res1 - res2) / (((x1 - xmin) / (xmax - xmin)) - ((x2 - xmin) / (xmax - xmin)))
+    theta[1] = (res1 - res2) / (min(normalize(X)) - max(normalize(X)))
     theta[0] = res1 - (((x1 - xmin) / (xmax - xmin)) * theta[1])
     return theta
 
@@ -81,6 +102,9 @@ def set_theta_after_norm(X, theta):
     """
     after a normalization x = (x - min) / (max - min), the value of the theta are not correct.
     we need to update the values with this function
+
+    theta0 + theta1 * x = theta0_norm + theta1_norm * x_norm
+    we resolve this equation with min(X) and x max(X)
     """
     xmin = min(X)  # min value in X
     xmax = max(X)  # max value in X
@@ -88,8 +112,8 @@ def set_theta_after_norm(X, theta):
     x2 = xmax  # here we chose min and max values
 
     # we have some calcule to do to know the new values of theta
-    res1 = theta[0] + theta[1] * ((x1 - xmin) / (xmax - xmin))
-    res2 = theta[0] + theta[1] * ((x2 - xmin) / (xmax - xmin))
+    res1 = theta[0] + theta[1] * min(normalize(X))
+    res2 = theta[0] + theta[1] * max(normalize(X))
 
     theta[1] = (res1 - res2) / (x1 - x2)
     theta[0] = res1 - (x1 * theta[1])
