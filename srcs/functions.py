@@ -1,4 +1,5 @@
-from srcs.utils.log import logerr
+import srcs.const as const
+from srcs.utils.log import logerr, loginfo
 """
 this file contains utils fonctions
 """
@@ -18,6 +19,25 @@ def normalize(X):
     return (X - min(X)) / (max(X) - min(X))
 
 
+def normalize_theta(X, theta):
+    """
+    in input we have a theta for non-normalized values.
+    we need to update the theta to fit with normalised values
+    """
+    xmin = min(X)  # min value in X
+    xmax = max(X)  # max value in X
+    x1 = xmin  # we need to test with 2 value of X to determine the result
+    x2 = xmax  # here we chose min and max values
+
+    # we have some calcule to do to know the new values of theta
+    res1 = theta[0] + theta[1] * x1
+    res2 = theta[0] + theta[1] * x2
+
+    theta[1] = (res1 - res2) / (((x1 - xmin) / (xmax - xmin)) - ((x2 - xmin) / (xmax - xmin)))
+    theta[0] = res1 - (((x1 - xmin) / (xmax - xmin)) * theta[1])
+    return theta
+
+
 def cost(X, y, theta):
     """
     this function is used to determine the cost with given theta values
@@ -25,10 +45,9 @@ def cost(X, y, theta):
     return 1 / (2 * X.shape[0]) * sum((predict(X, theta) - y) ** 2)
 
 
-def fit(X, y, theta, alpha, num_iters, cost_function=None):
+def fit(X, y, theta, alpha, num_iters, auto_stop=False):
     """
     fit a dataset with only one parameter (using linear_regression)
-    if cost_function is not None, save and return a cost history
     return (theta, cost_history)
     """
     m = X.shape[0]
@@ -40,8 +59,20 @@ def fit(X, y, theta, alpha, num_iters, cost_function=None):
         tmp[1] = theta[1] - alpha * 1 / m * sum((predict(X, theta) - y) * X)
         theta[0] = tmp[0]
         theta[1] = tmp[1]
-        if cost_function is not None:
-            J_history.append(cost_function(X, y, theta))
+
+        J_history.append(cost(X, y, theta))
+        if len(J_history) >= 2:
+
+            # test is thecost increase
+            if J_history[-1] - const.INCREASE_THRESHOLD > J_history[0]:  # the cost increase
+                logerr('wrong value of alpha (%f), the cost inscrease -> stop fit' % (alpha))
+                return theta, J_history
+
+            # test is the fit is done
+            if auto_stop:
+                if J_history[-2] <= J_history[-1] + (const.STOP_THRESHOLD * alpha):
+                    loginfo('auto stopped at %d iterations' % (iter_))
+                    return theta, J_history
 
     return theta, J_history
 

@@ -3,7 +3,7 @@ import srcs.const as const
 import srcs.utils.args as args
 from srcs.utils.log import loginfo
 from srcs.files import export_theta, import_data, get_theta_in_args
-from srcs.functions import check_theta, normalize, fit, set_theta_after_norm
+from srcs.functions import check_theta, normalize, fit, normalize_theta, set_theta_after_norm
 
 """
 if --theta=[<float>, <float>] -> use this theta
@@ -14,7 +14,7 @@ all_args = dict(
     learning_rate=dict(
         value=const.LEARNING_RATE,
         type=[float, int],
-        argnames=['--learning_rate'],
+        argnames=['--learning_rate', '--alpha'],
     ),
     theta=dict(
         value=None,
@@ -50,6 +50,12 @@ all_args = dict(
         argnames=['--theta_filename'],
         info='path of the theta file (json)'
     ),
+    auto_stop=dict(
+        value=True,
+        type=[bool],
+        argnames=['--theta_filename'],
+        info='path of the theta file (json)'
+    ),
 )
 
 
@@ -61,9 +67,11 @@ def start_train(all_args):
     if data is None:
         exit(1)
     norm_X = normalize(X)
-    loginfo('start train: learning_rate=%f, nb_iter=%d, theta=%s' %
+    loginfo('start train: learning_rate=%g, nb_iter=%d, theta=%s' %
             (all_args['learning_rate']['value'], all_args['nb_iter']['value'], str(theta)))
-    theta, J_history = fit(norm_X, y, theta, all_args['learning_rate']['value'], all_args['nb_iter']['value'])
+    theta = normalize_theta(X, theta)
+    theta, J_history = fit(norm_X, y, theta, all_args['learning_rate']['value'], all_args['nb_iter']['value'],
+                           auto_stop=all_args['auto_stop'])
     theta = set_theta_after_norm(X, theta)
     loginfo('after train, new theta ->', theta)
     export_theta(all_args['theta_filename']['value'], theta)
